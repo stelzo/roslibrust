@@ -26,14 +26,14 @@ lazy_static! {
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     env_logger::init();
     let (source, _paths) =
-        roslibrust_codegen::find_and_generate_ros_messages_without_ros_package_path(
+        roslibrust::codegen::find_and_generate_ros_messages_without_ros_package_path(
             (*ROS_1_PATHS).clone(),
         )?;
     let source = format_rust_source(source.to_string().as_str()).to_string();
     std::fs::write(concat!(env!("CARGO_MANIFEST_DIR"), "/src/ros1.rs"), source)?;
 
     let (source, _paths) =
-        roslibrust_codegen::find_and_generate_ros_messages_without_ros_package_path(vec![
+        roslibrust::codegen::find_and_generate_ros_messages_without_ros_package_path(vec![
             ROS_2_PATH.into(),
             ROS_2_TEST_PATH.into(),
         ])?;
@@ -75,7 +75,7 @@ mod test {
     #[test]
     fn ros1_lib_is_up_to_date() {
         let (source, _paths) =
-            roslibrust_codegen::find_and_generate_ros_messages_without_ros_package_path(
+            roslibrust::codegen::find_and_generate_ros_messages_without_ros_package_path(
                 (*ROS_1_PATHS).clone(),
             )
             .unwrap();
@@ -97,7 +97,7 @@ mod test {
     #[test]
     fn ros2_lib_is_up_to_date() {
         let (source, _paths) =
-            roslibrust_codegen::find_and_generate_ros_messages_without_ros_package_path(
+            roslibrust::codegen::find_and_generate_ros_messages_without_ros_package_path(
                 (*ROS_2_PATHS).clone(),
             )
             .unwrap();

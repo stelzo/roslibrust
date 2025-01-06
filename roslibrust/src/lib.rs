@@ -120,3 +120,13 @@ pub use roslibrust_zenoh as zenoh;
 // If the mock feature is enabled, export the roslibrust_mock crate under mock
 #[cfg(feature = "mock")]
 pub use roslibrust_mock as mock;
+
+// If the codegen feature is enabled, export the roslibrust_codegen crate under codegen
+#[cfg(feature = "codegen")]
+pub use roslibrust_codegen as codegen;
+
+// If the macro feature is enabled, export the roslibrust_codegen_macros directly
+#[cfg(feature = "macro")]
+pub use roslibrust_codegen_macro::find_and_generate_ros_messages;
+#[cfg(feature = "macro")]
+pub use roslibrust_codegen_macro::find_and_generate_ros_messages_without_ros_package_path;

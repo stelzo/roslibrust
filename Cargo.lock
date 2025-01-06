@@ -841,17 +841,16 @@ name = "example_package"
 version = "0.1.0"
 dependencies = [
  "cargo-emit",
- "roslibrust_codegen",
- "roslibrust_common",
+ "roslibrust",
+ "tokio",
 ]
 
 [[package]]
 name = "example_package_macro"
 version = "0.1.0"
 dependencies = [
- "roslibrust_codegen",
- "roslibrust_codegen_macro",
- "roslibrust_common",
+ "roslibrust",
+ "tokio",
 ]
 
 [[package]]
@@ -2722,8 +2721,6 @@ dependencies = [
  "log",
  "pprof",
  "roslibrust",
- "roslibrust_codegen",
- "roslibrust_common",
  "tokio",
 ]
 

@@ -391,7 +391,7 @@ impl<T: ServiceProvider + Send + Sync> RosApi for T {
 #[cfg(feature = "ros1_test")]
 mod test {
     use super::RosApi;
-    use roslibrust_rosbridge::{ClientHandle, ClientHandleOptions};
+    use roslibrust::rosbridge::{ClientHandle, ClientHandleOptions};
 
     async fn fixture_client() -> ClientHandle {
         // Tiny sleep to throttle rate at which tests are run to try to make CI more consistent

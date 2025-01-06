@@ -2,9 +2,9 @@
 mod tests {
     use roslibrust_common::RosMessageType;
     use roslibrust_ros1::NodeHandle;
+    use roslibrust_test::ros1::*;
     use serde::de::DeserializeOwned;
     use serde_xmlrpc::Value;
-    roslibrust_codegen_macro::find_and_generate_ros_messages!("assets/ros1_common_interfaces");
 
     async fn call_node_api_raw(uri: &str, endpoint: &str, args: Vec<Value>) -> String {
         let client = reqwest::Client::new();

@@ -101,10 +101,6 @@
 // Re-export common types and traits under the roslibrust namespace
 pub use roslibrust_common::*;
 
-// If the rosapi feature is enabled, export the roslibrust_rosapi crate under rosapi
-#[cfg(feature = "rosapi")]
-pub use roslibrust_rosapi as rosapi;
-
 // If the ros1 feature is enabled, export the roslibrust_ros1 crate under ros1
 #[cfg(feature = "ros1")]
 pub use roslibrust_ros1 as ros1;

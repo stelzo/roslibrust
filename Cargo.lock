@@ -2559,7 +2559,6 @@ dependencies = [
  "roslibrust_common",
  "roslibrust_mock",
  "roslibrust_ros1",
- "roslibrust_rosapi",
  "roslibrust_rosbridge",
  "roslibrust_zenoh",
  "serde",
@@ -2637,9 +2636,8 @@ version = "0.1.0"
 dependencies = [
  "bincode",
  "log",
- "roslibrust_codegen",
- "roslibrust_codegen_macro",
  "roslibrust_common",
+ "roslibrust_test",
  "tokio",
 ]
 
@@ -2671,10 +2669,7 @@ dependencies = [
 name = "roslibrust_rosapi"
 version = "0.1.0"
 dependencies = [
- "roslibrust_codegen",
- "roslibrust_codegen_macro",
- "roslibrust_common",
- "roslibrust_rosbridge",
+ "roslibrust",
  "test-log",
  "tokio",
 ]
@@ -2692,6 +2687,7 @@ dependencies = [
  "roslibrust_codegen",
  "roslibrust_codegen_macro",
  "roslibrust_common",
+ "roslibrust_test",
  "serde_json",
  "test-log",
  "tokio",

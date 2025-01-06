@@ -200,11 +200,8 @@ impl<T: RosMessageType> Subscribe<T> for MockSubscriber<T> {
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    roslibrust_codegen_macro::find_and_generate_ros_messages!(
-        "assets/ros1_common_interfaces/std_msgs",
-        "assets/ros1_common_interfaces/ros_comm_msgs/std_srvs"
-    );
+    use roslibrust_test::ros1::std_msgs;
+    use roslibrust_test::ros1::std_srvs;
 
     #[tokio::test(flavor = "multi_thread")]
     async fn test_mock_topics() {

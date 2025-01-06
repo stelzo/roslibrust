@@ -16,7 +16,6 @@ roslibrust_ros1 = { path = "../roslibrust_ros1", optional = true }
 roslibrust_rosbridge = { path = "../roslibrust_rosbridge", optional = true }
 roslibrust_zenoh = { path = "../roslibrust_zenoh", optional = true }
 roslibrust_mock = { path = "../roslibrust_mock", optional = true }
-roslibrust_rosapi = { path = "../roslibrust_rosapi", optional = true }
 roslibrust_codegen = { path = "../roslibrust_codegen", optional = true }
 roslibrust_codegen_macro = { path = "../roslibrust_codegen_macro", optional = true }
 
@@ -34,9 +33,7 @@ roslibrust_codegen_macro = { path = "../roslibrust_codegen_macro" }
 [features]
 default = []
 # `all` enables all "useful" features to end users, other features are for testing purposes
-all = ["codegen", "macro", "ros1", "rosbridge", "rosapi", "zenoh", "mock"]
-# Provides a rosapi rust interface
-rosapi = ["roslibrust_rosapi"]
+all = ["codegen", "macro", "ros1", "rosbridge", "zenoh", "mock"]
 # Provides a ros1 xmlrpc / TCPROS client
 ros1 = ["roslibrust_ros1"]
 # Provides a backend using the rosbridge websocket protocol

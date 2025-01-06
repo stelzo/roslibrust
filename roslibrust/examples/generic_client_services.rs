@@ -25,6 +25,7 @@ async fn main() {
     }
 
     // Basic example of a node that publishes and subscribes to itself
+    // This node will work with any backend
     impl<T: ServiceProvider> MyNode<T> {
         fn handle_service(
             _request: std_srvs::SetBoolRequest,
@@ -63,6 +64,7 @@ async fn main() {
         }
     }
 
+    // Use our generic node with the rosbridge backend
     // create a rosbridge handle and start node
     let ros = roslibrust::rosbridge::ClientHandle::new("ws://localhost:9090")
         .await
@@ -70,6 +72,7 @@ async fn main() {
     let node = MyNode { ros };
     tokio::spawn(async move { node.run().await });
 
+    // Use our generic node with the ros1 backend
     // create a ros1 handle and start node
     let ros = roslibrust::ros1::NodeHandle::new("http://localhost:11311", "/my_node")
         .await

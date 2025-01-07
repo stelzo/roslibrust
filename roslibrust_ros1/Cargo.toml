@@ -1,11 +1,16 @@
 [package]
 name = "roslibrust_ros1"
-version = "0.1.0"
+version = "0.12.0"
 edition = "2021"
+authors = [ "carter <carterjschultz@gmail.com>", "ssnover <ssnover95@gmail.com>" ]
+license = "MIT"
+description = "A implementation of roslibrust's generic traits for native ROS1 communication."
+repository = "https://github.com/roslibrust/roslibrust"
+categories = ["science::robotics"]
 
 [dependencies]
 # Provides common types and traits used throughout the roslibrust ecosystem.
-roslibrust_common = { path = "../roslibrust_common" }
+roslibrust_common = { path = "../roslibrust_common", version = "0.12" }
 
 # Standard dependencies:
 tokio = { workspace = true }

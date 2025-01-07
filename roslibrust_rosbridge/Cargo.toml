@@ -1,10 +1,15 @@
 [package]
 name = "roslibrust_rosbridge"
-version = "0.1.0"
+version = "0.12.0"
 edition = "2021"
+authors = [ "carter <carterjschultz@gmail.com>", "ssnover <ssnover95@gmail.com>" ]
+license = "MIT"
+description = "An implementation of roslibrust's generic traits for rosbridge_suite communication."
+repository = "https://github.com/roslibrust/roslibrust"
+categories = ["science::robotics"]
 
 [dependencies]
-roslibrust_common = { path = "../roslibrust_common" }
+roslibrust_common = { path = "../roslibrust_common", version = "0.12" }
 tokio = { workspace = true }
 log = { workspace = true }
 tokio-tungstenite = { version = "0.17" }

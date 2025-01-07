@@ -1,7 +1,12 @@
 [package]
 name = "roslibrust_zenoh"
-version = "0.1.0"
+version = "0.12.0"
 edition = "2021"
+authors = [ "carter <carterjschultz@gmail.com>" ]
+license = "MIT"
+description = "A zenoh backend for roslibrust compatible with zenoh-ros1-plugin / zenoh-ros1-bridge."
+repository = "https://github.com/roslibrust/roslibrust"
+categories = ["science::robotics"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -9,7 +14,7 @@ edition = "2021"
 roslibrust_serde_rosmsg = { workspace = true }
 log = { workspace = true }
 tokio = { workspace = true }
-roslibrust_common = { path = "../roslibrust_common" }
+roslibrust_common = { path = "../roslibrust_common", version = "0.12" }
 zenoh = "1.0"
 hex = "0.4"
 anyhow = "1.0"

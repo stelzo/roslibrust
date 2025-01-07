@@ -1,3 +1,22 @@
+//! A mock implementation of roslibrust's generic traits useful for testing ROS behaviors
+//! ```
+//! async fn my_ros_thing(ros: impl TopicProvider) -> roslibrust::Result<()> {
+//!     let my_publisher = ros.advertise::<std_msgs::String>("my_topic").await?;
+//!     my_publisher.publish(&std_msgs::String { data: "Hello, world!".to_string() }).await?;
+//! }
+//!
+//! #[tokio::test]
+//! async fn test_my_ros_thing() {
+//!     // Create a mock ros instance with new
+//!     let ros = roslibrust::mock::MockRos::new();
+//!     // Use it like ros:
+//!     let test_sub = ros.subscribe::<std_msgs::String>("my_topic").await?;
+//!     // Kick off our object under test
+//!     tokio::spawn(my_ros_thing(ros));
+//!     // Assert we got the message we expected
+//!     assert_eq!(test_sub.next().await.unwrap().unwrap().data, "Hello, world!");
+//! }
+//! ```
 use std::collections::BTreeMap;
 use std::sync::Arc;
 
@@ -15,6 +34,9 @@ type TypeErasedCallback = Arc<
         + 'static,
 >;
 
+/// A mock ROS implementation that can be substituted for any roslibrust backend in unit tests.
+///
+/// Implements [TopicProvider] and [ServiceProvider] to provide basic ros functionality.
 pub struct MockRos {
     // We could probably achieve some fancier type erasure than actually serializing the data
     // but this ends up being pretty simple
@@ -89,6 +111,8 @@ impl TopicProvider for MockRos {
     }
 }
 
+/// The handle type returned by calling [MockRos::service_client].
+/// Represents a ROS service connection and allows the service to be called multiple times.
 pub struct MockServiceClient<T: RosServiceType> {
     callback: TypeErasedCallback,
     _marker: std::marker::PhantomData<T>,
@@ -163,6 +187,7 @@ impl ServiceProvider for MockRos {
     }
 }
 
+/// The publisher type returned by calling [MockRos::advertise].
 pub struct MockPublisher<T: RosMessageType> {
     sender: Channel::Sender<Vec<u8>>,
     _marker: std::marker::PhantomData<T>,
@@ -178,6 +203,7 @@ impl<T: RosMessageType> Publish<T> for MockPublisher<T> {
     }
 }
 
+/// The subscriber type returned by calling [MockRos::subscribe].
 pub struct MockSubscriber<T: RosMessageType> {
     receiver: Channel::Receiver<Vec<u8>>,
     _marker: std::marker::PhantomData<T>,

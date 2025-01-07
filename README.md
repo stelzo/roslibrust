@@ -50,7 +50,6 @@ async fn main() -> RosResult<()> {
     // Relay messages over a native ROS2 connection
     // let ros = roslibrust::ros2::NodeHandle::new("http://localhost:11311", "relay").await?;
     // relay(ros).await?;
-
     Ok(())
 }
 ```

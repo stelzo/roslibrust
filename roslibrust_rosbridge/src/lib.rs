@@ -1,3 +1,29 @@
+//! A implementation of roslibrust's generic traits for rosbridge_suite communication.
+//!
+//! [rosbridge_server][<https://github.com/RobotWebTools/rosbridge_suite>] provides a useful websocket interface to ROS.
+//!
+//! This server operates over a single port making it easier to use in constrained networking environments and support TLS.
+//!
+//! Additionally, rosbridge_server exists for both ROS1 and ROS2 with an unchanged API meaning code targeting rosbridge can be used with both ROS1 and ROS2.
+//!
+//! This backend is fundamentally less efficient than native ROS1 communication, but its added flexibility can be very useful.
+//!
+//! Basic Example:
+//! ```
+//! async fn my_behavior(ros: impl TopicProvider) -> roslibrust::Result<()> {
+//!     let publisher = ros.advertise::<std_msgs::String>("my_topic").await?;
+//!     publisher.publish(&std_msgs::String { data: "Hello, world!".to_string() }).await?;
+//! }
+//!
+//! #[tokio::main]
+//! async fn main() -> Result<(), Box<dyn std::error::Error>> {
+//!     // Create a rosbridge handle we can use
+//!     let ros = roslibrust::rosbridge::ClientHandle::new("ws://localhost:9090").await?;
+//!     // Use it like ros:
+//!     my_behavior(ros).await?;
+//! }
+//! ```
+
 use roslibrust_common::*;
 
 // Subscriber is a transparent module, we directly expose internal types
@@ -104,7 +130,6 @@ type MessageQueue<T> = deadqueue::limited::Queue<T>;
 // TODO queue size should be configurable for subscribers
 const QUEUE_SIZE: usize = 1_000;
 
-// TODO move out of rosbridge and into common
 /// Internal tracking structure used to maintain information about each subscription our client has
 /// with rosbridge.
 pub(crate) struct Subscription {
@@ -117,7 +142,6 @@ pub(crate) struct Subscription {
     pub(crate) topic_type: String,
 }
 
-// TODO move out of rosbridge and into common
 pub(crate) struct PublisherHandle {
     pub(crate) topic_type: String,
 }

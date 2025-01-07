@@ -1,4 +1,4 @@
-#![doc = include_str!("../README.md")]
+#![doc = include_str!("../../README.md")]
 
 // Re-export common types and traits under the roslibrust namespace
 pub use roslibrust_common::*;

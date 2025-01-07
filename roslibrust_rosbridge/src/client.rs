@@ -364,7 +364,9 @@ impl ClientHandle {
 
         // Having to do manual timeout logic here because of error types
         let recv = if let Some(timeout) = client.opts.timeout {
-            tokio::time::timeout(timeout, rx).await?
+            tokio::time::timeout(timeout, rx)
+                .await
+                .map_err(|e| Error::Timeout(format!("Service call timed out: {e:?}")))?
         } else {
             rx.await
         };
@@ -386,8 +388,8 @@ impl ClientHandle {
                 match serde_json::from_value(msg) {
                     Ok(s) => return Err(Error::ServerError(s)),
                     Err(_) => {
-                        // Return the error from the origional parse
-                        return Err(Error::InvalidMessage(e));
+                        // Return the error from the original parse
+                        return Err(Error::SerializationError(e.to_string()));
                     }
                 }
             }
@@ -677,7 +679,10 @@ impl Client {
             match stream.next().await {
                 Some(Ok(msg)) => msg,
                 Some(Err(e)) => {
-                    return Err(e.into());
+                    return Err(Error::IoError(std::io::Error::new(
+                        std::io::ErrorKind::Other,
+                        e,
+                    )));
                 }
                 None => {
                     return Err(Error::Unexpected(anyhow!("Wtf does none mean here?")));
@@ -781,7 +786,9 @@ where
     F: futures::Future<Output = Result<T>>,
 {
     if let Some(t) = timeout {
-        tokio::time::timeout(t, future).await?
+        tokio::time::timeout(t, future)
+            .await
+            .map_err(|e| Error::Timeout(format!("{e:?}")))?
     } else {
         future.await
     }
@@ -811,6 +818,9 @@ async fn connect(url: &str) -> Result<Socket> {
     let attempt = tokio_tungstenite::connect_async(url).await;
     match attempt {
         Ok((stream, _response)) => Ok(stream),
-        Err(e) => Err(e.into()),
+        Err(e) => Err(Error::IoError(std::io::Error::new(
+            std::io::ErrorKind::Other,
+            e,
+        ))),
     }
 }

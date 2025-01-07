@@ -1,37 +1,49 @@
 //! # roslibrust_common
 //! This crate provides common types and traits used throughout the roslibrust ecosystem.
 
-/// For now starting with a central error type, may break this up more in future
+/// The central error type used throughout roslibrust.
+///
+/// For now all roslibrust backends must coerce their errors into this type.
+/// We may in the future allow backends to define their own error types, for now this is a compromise.
+///
+/// Additionally, this error type is returned from all roslibrust function calls so failure types must be relatively generic.
 #[derive(thiserror::Error, Debug)]
 pub enum Error {
-    #[error("Not currently connected to ros master / bridge")]
+    /// Is returned when communication is fully lost.
+    /// While this error is being returned messages should be assumed to be being lost.
+    /// Backends are expected to be "self-healing" and when connection is restored existing Publishers, Subscribers, etc.
+    /// should resume functionality without needing to be recreated.
+    #[error("No connection to ROS backend")]
     Disconnected,
-    // TODO we probably want to eliminate tungstenite from this and hide our
-    // underlying websocket implementation from the API
-    // currently we "technically" break the API when we change tungstenite verisons
-    #[error("Websocket communication error: {0}")]
-    CommFailure(#[from] tokio_tungstenite::tungstenite::Error),
+    /// Some backends aren't able to conclusively determine if an operation has failed.
+    /// Timeout will be returned if an operation takes a unexpectedly long time.
+    /// For the `rosbridge` backend where this is most frequently encountered the timeout is configurable on the client.
     #[error("Operation timed out: {0}")]
-    Timeout(#[from] tokio::time::error::Elapsed),
-    #[error("Failed to parse message from JSON: {0}")]
-    InvalidMessage(#[from] serde_json::Error),
-    #[error("TCPROS serialization error: {0}")]
+    Timeout(String),
+    /// When a message is received but the backend is unable to serialize/deserialize it to the Rust type representing the message type.
+    ///
+    /// This error is also returned in the event of an md5sum mismatch.
+    #[error("Serialization error: {0}")]
     SerializationError(String),
+    /// When the backend "server" reports an error this type is returned.
+    ///
+    /// This can happen when there are internal issues on the rosbridge_server, or with xmlrpc communication with the ros1 master.
     #[error("Rosbridge server reported an error: {0}")]
     ServerError(String),
+    /// Returned when there is a fundamental networking error.
+    ///
+    /// Typically reserved for situations when ports are unavailable, dns lookups fail, etc.
     #[error("IO error: {0}")]
     IoError(#[from] std::io::Error),
+    /// When a topic name is used that isn't a valid topic name.
     #[error("Name does not meet ROS requirements: {0}")]
     InvalidName(String),
-    // Generic catch-all error type for not-yet-handled errors
-    // TODO ultimately this type will be removed from API of library
+    /// Backends are free to return this error if they encounter any error that doesn't cleanly fit in the other categories.
     #[error(transparent)]
     Unexpected(#[from] anyhow::Error),
 }
 
-/// Generic result type used as standard throughout library.
-/// Note: many functions which currently return this will be updated to provide specific error
-/// types in the future instead of the generic error here.
+/// Generic result type used throughout roslibrust.
 pub type Result<T> = std::result::Result<T, Error>;
 
 /// Fundamental traits for message types this crate works with

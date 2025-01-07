@@ -1,8 +1,9 @@
+use crate::MapError;
 use crate::Writer;
 use anyhow::bail;
 use futures_util::SinkExt;
 use log::debug;
-use roslibrust_common::{Result, RosMessageType};
+use roslibrust_common::{Error, Result, RosMessageType};
 use serde_json::json;
 use std::{fmt::Display, str::FromStr, string::ToString};
 use tokio_tungstenite::tungstenite::Message;
@@ -122,7 +123,7 @@ impl RosBridgeComm for Writer {
         );
         let msg = Message::Text(msg.to_string());
         debug!("Sending subscribe: {:?}", &msg);
-        self.send(msg).await?;
+        self.send(msg).await.map_to_roslibrust()?;
         Ok(())
     }
 
@@ -135,7 +136,7 @@ impl RosBridgeComm for Writer {
         );
         let msg = Message::Text(msg.to_string());
         debug!("Sending unsubscribe: {:?}", &msg);
-        self.send(msg).await?;
+        self.send(msg).await.map_to_roslibrust()?;
         Ok(())
     }
 
@@ -150,7 +151,7 @@ impl RosBridgeComm for Writer {
         );
         let msg = Message::Text(msg.to_string());
         debug!("Sending publish: {:?}", &msg);
-        self.send(msg).await?;
+        self.send(msg).await.map_to_roslibrust()?;
         Ok(())
     }
 
@@ -171,7 +172,7 @@ impl RosBridgeComm for Writer {
         );
         let msg = Message::Text(msg.to_string());
         debug!("Sending advertise: {:?}", &msg);
-        self.send(msg).await?;
+        self.send(msg).await.map_to_roslibrust()?;
         Ok(())
     }
 
@@ -191,7 +192,7 @@ impl RosBridgeComm for Writer {
         );
         let msg = Message::Text(msg.to_string());
         debug!("Sending call_service: {:?}", &msg);
-        self.send(msg).await?;
+        self.send(msg).await.map_to_roslibrust()?;
         Ok(())
     }
 
@@ -205,7 +206,7 @@ impl RosBridgeComm for Writer {
         };
         let msg = Message::Text(msg.to_string());
         debug!("Sending unadvertise: {:?}", &msg);
-        self.send(msg).await?;
+        self.send(msg).await.map_to_roslibrust()?;
         Ok(())
     }
 
@@ -219,7 +220,7 @@ impl RosBridgeComm for Writer {
             }
         };
         let msg = Message::Text(msg.to_string());
-        self.send(msg).await?;
+        self.send(msg).await.map_to_roslibrust()?;
         Ok(())
     }
 
@@ -232,7 +233,9 @@ impl RosBridgeComm for Writer {
             }
         };
         let msg = Message::Text(msg.to_string());
-        self.send(msg).await?;
+        self.send(msg)
+            .await
+            .map_err(|e| Error::IoError(std::io::Error::new(std::io::ErrorKind::Other, e)))?;
         Ok(())
     }
 
@@ -258,7 +261,7 @@ impl RosBridgeComm for Writer {
         };
         let msg = Message::Text(msg.to_string());
         debug!("Sending service_response: {:?}", &msg);
-        self.send(msg).await?;
+        self.send(msg).await.map_to_roslibrust()?;
         Ok(())
     }
 }

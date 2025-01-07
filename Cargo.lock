@@ -2610,10 +2610,7 @@ dependencies = [
  "futures",
  "md5",
  "serde",
- "serde_json",
  "thiserror 2.0.6",
- "tokio",
- "tokio-tungstenite 0.17.2",
 ]
 
 [[package]]

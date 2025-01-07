@@ -221,6 +221,27 @@ impl<T: RosMessageType> Publish<T> for crate::Publisher<T> {
     }
 }
 
+/// Defines a conversion from a tungstenite error to a roslibrust error
+/// Since neither error type is owned by this crate we use a trait to define the conversion
+trait MapError {
+    type T;
+    fn map_to_roslibrust(self) -> Result<Self::T>;
+}
+
+// Implementation of conversion from tungstenite error to roslibrust error for a result
+impl<T: Send + Sync> MapError for std::result::Result<T, tokio_tungstenite::tungstenite::Error> {
+    type T = T;
+    fn map_to_roslibrust(self) -> Result<T> {
+        match self {
+            Ok(t) => Ok(t),
+            Err(e) => Err(Error::IoError(std::io::Error::new(
+                std::io::ErrorKind::Other,
+                e,
+            ))),
+        }
+    }
+}
+
 #[cfg(test)]
 mod test {
     use roslibrust_common::*;

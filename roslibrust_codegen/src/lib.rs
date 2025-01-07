@@ -1,3 +1,13 @@
+//! A library for generating rust type definitions from ROS IDL files
+//! Supports both ROS1 and ROS2.
+//! Generated types implement roslibrust's MessageType and ServiceType traits making them compatible with all roslibrust backends.
+//!
+//! This library is a pure rust implementation from scratch and requires no ROS installation.
+//!
+//! See [example_package](https://github.com/RosLibRust/roslibrust/tree/master/example_package) for how best to integrate this crate with build.rs
+//!
+//! Directly depending on this crate is not recommended. Instead access it via roslibrust with the `codegen` feature enabled.
+
 use log::*;
 use proc_macro2::TokenStream;
 use quote::quote;

@@ -32,7 +32,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             *data.last_mut().unwrap() = 69;
             let image = ros1::sensor_msgs::Image {
                 header: ros1::std_msgs::Header {
-                    stamp: roslibrust_codegen::Time { secs: 0, nsecs: 0 },
+                    stamp: Default::default(),
                     frame_id: "test".to_string(),
                     seq: data_size_mb as u32,
                 },

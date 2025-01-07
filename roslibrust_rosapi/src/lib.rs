@@ -3,127 +3,123 @@
 //!
 //! Ensure rosapi is running on your target system before attempting to utilize these features!
 
-use roslibrust_common::topic_provider::ServiceProvider;
+use roslibrust::ServiceProvider;
 
 // TODO major issue here for folks who actually try to use rosapi in their project
 // This macro isn't going to expand correctly when not used from this crate's workspace
 // We almost certainly need to generate and commit the resulting messages, or
 // do some include_str!() hax to be able to ship these types with the crate...
-roslibrust_codegen_macro::find_and_generate_ros_messages!("assets/ros1_common_interfaces/rosapi");
+roslibrust::find_and_generate_ros_messages!("assets/ros1_common_interfaces/rosapi");
 
 /// Represents the ability to interact with the interfaces provided by the rosapi node.
 /// This trait is implemented for ClientHandle when the `rosapi` feature is enabled.
 pub trait RosApi {
     fn get_time(
         &self,
-    ) -> impl std::future::Future<Output = roslibrust_common::Result<rosapi::GetTimeResponse>> + Send;
+    ) -> impl std::future::Future<Output = roslibrust::Result<rosapi::GetTimeResponse>> + Send;
     fn topics(
         &self,
-    ) -> impl std::future::Future<Output = roslibrust_common::Result<rosapi::TopicsResponse>> + Send;
+    ) -> impl std::future::Future<Output = roslibrust::Result<rosapi::TopicsResponse>> + Send;
     fn get_topic_type(
         &self,
         topic: impl Into<String> + Send,
-    ) -> impl std::future::Future<Output = roslibrust_common::Result<rosapi::TopicTypeResponse>> + Send;
+    ) -> impl std::future::Future<Output = roslibrust::Result<rosapi::TopicTypeResponse>> + Send;
     fn get_topics_for_type(
         &self,
         topic_type: impl Into<String> + Send,
-    ) -> impl std::future::Future<Output = roslibrust_common::Result<rosapi::TopicsForTypeResponse>> + Send;
+    ) -> impl std::future::Future<Output = roslibrust::Result<rosapi::TopicsForTypeResponse>> + Send;
     fn get_nodes(
         &self,
-    ) -> impl std::future::Future<Output = roslibrust_common::Result<rosapi::NodesResponse>> + Send;
+    ) -> impl std::future::Future<Output = roslibrust::Result<rosapi::NodesResponse>> + Send;
 
     fn get_node_details(
         &self,
         node: impl Into<String> + Send,
-    ) -> impl std::future::Future<Output = roslibrust_common::Result<rosapi::NodeDetailsResponse>> + Send;
+    ) -> impl std::future::Future<Output = roslibrust::Result<rosapi::NodeDetailsResponse>> + Send;
 
     fn get_node_for_service(
         &self,
         service: impl Into<String> + Send,
-    ) -> impl std::future::Future<Output = roslibrust_common::Result<rosapi::ServiceNodeResponse>> + Send;
+    ) -> impl std::future::Future<Output = roslibrust::Result<rosapi::ServiceNodeResponse>> + Send;
 
     fn set_param(
         &self,
         param_name: impl Into<String> + Send,
         param_value: impl Into<String> + Send,
-    ) -> impl std::future::Future<Output = roslibrust_common::Result<rosapi::SetParamResponse>> + Send;
+    ) -> impl std::future::Future<Output = roslibrust::Result<rosapi::SetParamResponse>> + Send;
 
     fn get_param(
         &self,
         param_name: impl Into<String> + Send,
-    ) -> impl std::future::Future<Output = roslibrust_common::Result<rosapi::GetParamResponse>> + Send;
+    ) -> impl std::future::Future<Output = roslibrust::Result<rosapi::GetParamResponse>> + Send;
 
     fn get_param_names(
         &self,
-    ) -> impl std::future::Future<Output = roslibrust_common::Result<rosapi::GetParamNamesResponse>> + Send;
+    ) -> impl std::future::Future<Output = roslibrust::Result<rosapi::GetParamNamesResponse>> + Send;
 
     fn has_param(
         &self,
         param: impl Into<String> + Send,
-    ) -> impl std::future::Future<Output = roslibrust_common::Result<rosapi::HasParamResponse>> + Send;
+    ) -> impl std::future::Future<Output = roslibrust::Result<rosapi::HasParamResponse>> + Send;
 
     fn delete_param(
         &self,
         name: impl Into<String> + Send,
-    ) -> impl std::future::Future<Output = roslibrust_common::Result<rosapi::DeleteParamResponse>> + Send;
+    ) -> impl std::future::Future<Output = roslibrust::Result<rosapi::DeleteParamResponse>> + Send;
 
     fn message_details(
         &self,
         message_name: impl Into<String> + Send,
-    ) -> impl std::future::Future<Output = roslibrust_common::Result<rosapi::MessageDetailsResponse>>
-           + Send;
+    ) -> impl std::future::Future<Output = roslibrust::Result<rosapi::MessageDetailsResponse>> + Send;
 
     fn publishers(
         &self,
         topic: impl Into<String> + Send,
-    ) -> impl std::future::Future<Output = roslibrust_common::Result<rosapi::PublishersResponse>> + Send;
+    ) -> impl std::future::Future<Output = roslibrust::Result<rosapi::PublishersResponse>> + Send;
 
     fn service_host(
         &self,
         service: impl Into<String> + Send,
-    ) -> impl std::future::Future<Output = roslibrust_common::Result<rosapi::ServiceHostResponse>> + Send;
+    ) -> impl std::future::Future<Output = roslibrust::Result<rosapi::ServiceHostResponse>> + Send;
 
     fn service_providers(
         &self,
         service_type: impl Into<String> + Send,
-    ) -> impl std::future::Future<Output = roslibrust_common::Result<rosapi::ServiceProvidersResponse>>
-           + Send;
+    ) -> impl std::future::Future<Output = roslibrust::Result<rosapi::ServiceProvidersResponse>> + Send;
 
     fn get_service_request_details(
         &self,
         service_type: impl Into<String> + Send,
-    ) -> impl std::future::Future<
-        Output = roslibrust_common::Result<rosapi::ServiceRequestDetailsResponse>,
-    > + Send;
+    ) -> impl std::future::Future<Output = roslibrust::Result<rosapi::ServiceRequestDetailsResponse>>
+           + Send;
 
     fn get_service_response_details(
         &self,
         service_type: impl Into<String> + Send,
-    ) -> impl std::future::Future<
-        Output = roslibrust_common::Result<rosapi::ServiceRequestDetailsResponse>,
-    > + Send;
+    ) -> impl std::future::Future<Output = roslibrust::Result<rosapi::ServiceRequestDetailsResponse>>
+           + Send;
 
     fn get_service_type(
         &self,
         service_name: impl Into<String> + Send,
-    ) -> impl std::future::Future<Output = roslibrust_common::Result<rosapi::ServiceTypeResponse>> + Send;
+    ) -> impl std::future::Future<Output = roslibrust::Result<rosapi::ServiceTypeResponse>> + Send;
 
     fn get_services(
         &self,
-    ) -> impl std::future::Future<Output = roslibrust_common::Result<rosapi::ServicesResponse>> + Send;
+    ) -> impl std::future::Future<Output = roslibrust::Result<rosapi::ServicesResponse>> + Send;
 }
 
 /// A Generic implementation of the RosApi trait for any type that implements ServiceProvider
 /// Note, this will not work on ROS2 systems or systems without the rosapi node running.
 impl<T: ServiceProvider + Send + Sync> RosApi for T {
     /// Get the current time
-    async fn get_time(&self) -> roslibrust_common::Result<rosapi::GetTimeResponse> {
+    async fn get_time(&self) -> roslibrust::Result<rosapi::GetTimeResponse> {
         self.call_service::<rosapi::GetTime>("/rosapi/get_time", rosapi::GetTimeRequest {})
             .await
     }
 
     /// Get the list of topics active
-    async fn topics(&self) -> roslibrust_common::Result<rosapi::TopicsResponse> {
+    async fn topics(&self) -> roslibrust::Result<rosapi::TopicsResponse> {
         self.call_service::<rosapi::Topics>("/rosapi/topics", rosapi::TopicsRequest {})
             .await
     }
@@ -132,7 +128,7 @@ impl<T: ServiceProvider + Send + Sync> RosApi for T {
     async fn get_topic_type(
         &self,
         topic: impl Into<String> + Send,
-    ) -> roslibrust_common::Result<rosapi::TopicTypeResponse> {
+    ) -> roslibrust::Result<rosapi::TopicTypeResponse> {
         self.call_service::<rosapi::TopicType>(
             "/rosapi/topic_type",
             rosapi::TopicTypeRequest {
@@ -146,7 +142,7 @@ impl<T: ServiceProvider + Send + Sync> RosApi for T {
     async fn get_topics_for_type(
         &self,
         topic_type: impl Into<String> + Send,
-    ) -> roslibrust_common::Result<rosapi::TopicsForTypeResponse> {
+    ) -> roslibrust::Result<rosapi::TopicsForTypeResponse> {
         self.call_service::<rosapi::TopicsForType>(
             "/rosapi/topics_for_type",
             rosapi::TopicsForTypeRequest {
@@ -157,7 +153,7 @@ impl<T: ServiceProvider + Send + Sync> RosApi for T {
     }
 
     /// Returns list of nodes active in a system
-    async fn get_nodes(&self) -> roslibrust_common::Result<rosapi::NodesResponse> {
+    async fn get_nodes(&self) -> roslibrust::Result<rosapi::NodesResponse> {
         self.call_service::<rosapi::Nodes>("/rosapi/nodes", rosapi::NodesRequest {})
             .await
     }
@@ -167,7 +163,7 @@ impl<T: ServiceProvider + Send + Sync> RosApi for T {
     async fn get_node_details(
         &self,
         node: impl Into<String> + Send,
-    ) -> roslibrust_common::Result<rosapi::NodeDetailsResponse> {
+    ) -> roslibrust::Result<rosapi::NodeDetailsResponse> {
         self.call_service::<rosapi::NodeDetails>(
             "/rosapi/node_details",
             rosapi::NodeDetailsRequest { node: node.into() },
@@ -179,7 +175,7 @@ impl<T: ServiceProvider + Send + Sync> RosApi for T {
     async fn get_node_for_service(
         &self,
         service: impl Into<String> + Send,
-    ) -> roslibrust_common::Result<rosapi::ServiceNodeResponse> {
+    ) -> roslibrust::Result<rosapi::ServiceNodeResponse> {
         self.call_service::<rosapi::ServiceNode>(
             "/rosapi/service_node",
             rosapi::ServiceNodeRequest {
@@ -195,7 +191,7 @@ impl<T: ServiceProvider + Send + Sync> RosApi for T {
         &self,
         param_name: impl Into<String> + Send,
         param_value: impl Into<String> + Send,
-    ) -> roslibrust_common::Result<rosapi::SetParamResponse> {
+    ) -> roslibrust::Result<rosapi::SetParamResponse> {
         self.call_service::<rosapi::SetParam>(
             "/rosapi/set_param",
             rosapi::SetParamRequest {
@@ -211,7 +207,7 @@ impl<T: ServiceProvider + Send + Sync> RosApi for T {
     async fn get_param(
         &self,
         param_name: impl Into<String> + Send,
-    ) -> roslibrust_common::Result<rosapi::GetParamResponse> {
+    ) -> roslibrust::Result<rosapi::GetParamResponse> {
         self.call_service::<rosapi::GetParam>(
             "/rosapi/get_param",
             rosapi::GetParamRequest {
@@ -223,7 +219,7 @@ impl<T: ServiceProvider + Send + Sync> RosApi for T {
     }
 
     /// Gets the list of currently known parameters.
-    async fn get_param_names(&self) -> roslibrust_common::Result<rosapi::GetParamNamesResponse> {
+    async fn get_param_names(&self) -> roslibrust::Result<rosapi::GetParamNamesResponse> {
         self.call_service::<rosapi::GetParamNames>(
             "/rosapi/get_param_names",
             rosapi::GetParamNamesRequest {},
@@ -235,7 +231,7 @@ impl<T: ServiceProvider + Send + Sync> RosApi for T {
     async fn has_param(
         &self,
         param: impl Into<String> + Send,
-    ) -> roslibrust_common::Result<rosapi::HasParamResponse> {
+    ) -> roslibrust::Result<rosapi::HasParamResponse> {
         self.call_service::<rosapi::HasParam>(
             "/rosapi/has_param",
             rosapi::HasParamRequest { name: param.into() },
@@ -247,7 +243,7 @@ impl<T: ServiceProvider + Send + Sync> RosApi for T {
     async fn delete_param(
         &self,
         name: impl Into<String> + Send,
-    ) -> roslibrust_common::Result<rosapi::DeleteParamResponse> {
+    ) -> roslibrust::Result<rosapi::DeleteParamResponse> {
         self.call_service::<rosapi::DeleteParam>(
             "/rosapi/delete_param",
             rosapi::DeleteParamRequest { name: name.into() },
@@ -259,7 +255,7 @@ impl<T: ServiceProvider + Send + Sync> RosApi for T {
     async fn message_details(
         &self,
         message_name: impl Into<String> + Send,
-    ) -> roslibrust_common::Result<rosapi::MessageDetailsResponse> {
+    ) -> roslibrust::Result<rosapi::MessageDetailsResponse> {
         self.call_service::<rosapi::MessageDetails>(
             "/rosapi/message_details",
             rosapi::MessageDetailsRequest {
@@ -273,7 +269,7 @@ impl<T: ServiceProvider + Send + Sync> RosApi for T {
     async fn publishers(
         &self,
         topic: impl Into<String> + Send,
-    ) -> roslibrust_common::Result<rosapi::PublishersResponse> {
+    ) -> roslibrust::Result<rosapi::PublishersResponse> {
         self.call_service::<rosapi::Publishers>(
             "/rosapi/publishers",
             rosapi::PublishersRequest {
@@ -287,7 +283,7 @@ impl<T: ServiceProvider + Send + Sync> RosApi for T {
     async fn service_host(
         &self,
         service: impl Into<String> + Send,
-    ) -> roslibrust_common::Result<rosapi::ServiceHostResponse> {
+    ) -> roslibrust::Result<rosapi::ServiceHostResponse> {
         self.call_service::<rosapi::ServiceHost>(
             "/rosapi/service_host",
             rosapi::ServiceHostRequest {
@@ -301,7 +297,7 @@ impl<T: ServiceProvider + Send + Sync> RosApi for T {
     async fn service_providers(
         &self,
         service_type: impl Into<String> + Send,
-    ) -> roslibrust_common::Result<rosapi::ServiceProvidersResponse> {
+    ) -> roslibrust::Result<rosapi::ServiceProvidersResponse> {
         self.call_service::<rosapi::ServiceProviders>(
             "/rosapi/service_providers",
             rosapi::ServiceProvidersRequest {
@@ -315,7 +311,7 @@ impl<T: ServiceProvider + Send + Sync> RosApi for T {
     async fn get_service_request_details(
         &self,
         service_type: impl Into<String> + Send,
-    ) -> roslibrust_common::Result<rosapi::ServiceRequestDetailsResponse> {
+    ) -> roslibrust::Result<rosapi::ServiceRequestDetailsResponse> {
         self.call_service::<rosapi::ServiceRequestDetails>(
             "/rosapi/service_request_details",
             rosapi::ServiceRequestDetailsRequest {
@@ -329,7 +325,7 @@ impl<T: ServiceProvider + Send + Sync> RosApi for T {
     async fn get_service_response_details(
         &self,
         service_type: impl Into<String> + Send,
-    ) -> roslibrust_common::Result<rosapi::ServiceRequestDetailsResponse> {
+    ) -> roslibrust::Result<rosapi::ServiceRequestDetailsResponse> {
         self.call_service::<rosapi::ServiceRequestDetails>(
             "/rosapi/service_response_details",
             rosapi::ServiceRequestDetailsRequest {
@@ -343,7 +339,7 @@ impl<T: ServiceProvider + Send + Sync> RosApi for T {
     async fn get_service_type(
         &self,
         service_name: impl Into<String> + Send,
-    ) -> roslibrust_common::Result<rosapi::ServiceTypeResponse> {
+    ) -> roslibrust::Result<rosapi::ServiceTypeResponse> {
         self.call_service::<rosapi::ServiceType>(
             "/rosapi/service_type",
             rosapi::ServiceTypeRequest {
@@ -354,7 +350,7 @@ impl<T: ServiceProvider + Send + Sync> RosApi for T {
     }
 
     /// Get the list of services active on the system
-    async fn get_services(&self) -> roslibrust_common::Result<rosapi::ServicesResponse> {
+    async fn get_services(&self) -> roslibrust::Result<rosapi::ServicesResponse> {
         self.call_service::<rosapi::Services>("/rosapi/services", rosapi::ServicesRequest {})
             .await
     }
@@ -395,7 +391,7 @@ impl<T: ServiceProvider + Send + Sync> RosApi for T {
 #[cfg(feature = "ros1_test")]
 mod test {
     use super::RosApi;
-    use roslibrust_rosbridge::{ClientHandle, ClientHandleOptions};
+    use roslibrust::rosbridge::{ClientHandle, ClientHandleOptions};
 
     async fn fixture_client() -> ClientHandle {
         // Tiny sleep to throttle rate at which tests are run to try to make CI more consistent

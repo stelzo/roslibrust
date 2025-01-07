@@ -20,16 +20,10 @@ mod integration_tests {
     const LOCAL_WS: &str = "ws://localhost:9090";
 
     #[cfg(feature = "ros1_test")]
-    roslibrust_codegen_macro::find_and_generate_ros_messages!(
-        "assets/ros1_common_interfaces/ros_comm_msgs",
-        "assets/ros1_common_interfaces/std_msgs",
-    );
+    use roslibrust_test::ros1::*;
 
     #[cfg(feature = "ros2_test")]
-    roslibrust_codegen_macro::find_and_generate_ros_messages!(
-        "assets/ros2_common_interfaces/std_msgs",
-        "assets/ros2_common_interfaces/std_srvs"
-    );
+    use roslibrust_test::ros2::*;
     // This replaces the fact that Time.msg is no longer in std_msgs in ROS2
     #[cfg(feature = "ros2_test")]
     use roslibrust_codegen::integral_types::Time;

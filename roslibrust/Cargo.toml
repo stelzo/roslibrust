@@ -11,13 +11,13 @@ keywords = ["ROS", "robotics", "websocket", "json", "async"]
 categories = ["science::robotics"]
 
 [dependencies]
-# TODO versions here
 roslibrust_common = { path = "../roslibrust_common" }
 roslibrust_ros1 = { path = "../roslibrust_ros1", optional = true }
 roslibrust_rosbridge = { path = "../roslibrust_rosbridge", optional = true }
 roslibrust_zenoh = { path = "../roslibrust_zenoh", optional = true }
 roslibrust_mock = { path = "../roslibrust_mock", optional = true }
-roslibrust_rosapi = { path = "../roslibrust_rosapi", optional = true }
+roslibrust_codegen = { path = "../roslibrust_codegen", optional = true }
+roslibrust_codegen_macro = { path = "../roslibrust_codegen_macro", optional = true }
 
 [dev-dependencies]
 env_logger = "0.11"
@@ -29,19 +29,16 @@ serde = { workspace = true }
 # Used to generate messages for the examples
 roslibrust_codegen = { path = "../roslibrust_codegen" }
 roslibrust_codegen_macro = { path = "../roslibrust_codegen_macro" }
+# Slightly weird, but used in documentation examples
+roslibrust_test = { path = "../roslibrust_test" }
+# Slightly weird, but used in documentation examples
+zenoh = "1.0"
 
 [features]
+# default feature is pure traits only with no implementations
 default = []
-# Note: all does not include running_bridge as that is only intended for CI
-all = []
-# Provides a rosapi rust interface
-rosapi = ["roslibrust_rosapi"]
-# Intended for use with tests, includes tests that rely on a locally running rosbridge
-running_bridge = []
-# For use with integration tests, indicating we are testing integration with a ros1 bridge
-ros1_test = ["running_bridge", "ros1"]
-# For use with integration tests, indicates we are testing integration with a ros2 bridge
-ros2_test = ["running_bridge"]
+# `all` enables all "useful" features to end users, other features are for testing purposes
+all = ["codegen", "macro", "ros1", "rosbridge", "zenoh", "mock"]
 # Provides a ros1 xmlrpc / TCPROS client
 ros1 = ["roslibrust_ros1"]
 # Provides a backend using the rosbridge websocket protocol
@@ -50,6 +47,17 @@ rosbridge = ["roslibrust_rosbridge"]
 zenoh = ["roslibrust_zenoh"]
 # Provides a mock backend useful for writing tests around nodes
 mock = ["roslibrust_mock"]
+# Provides a macro for generating types from ROS messages
+codegen = ["roslibrust_codegen"]
+# Provides macros for generating types from ROS messages
+macro = ["roslibrust_codegen_macro", "codegen"]
+## Features below here are for testing purposes
+# Intended for use with tests, includes tests that rely on a locally running rosbridge
+running_bridge = []
+# For use with integration tests, indicating we are testing integration with a ros1 bridge
+ros1_test = ["running_bridge", "ros1"]
+# For use with integration tests, indicates we are testing integration with a ros2 bridge
+ros2_test = ["running_bridge"]
 
 [package.metadata.docs.rs]
-features = ["ros1"]
+features = ["all"]

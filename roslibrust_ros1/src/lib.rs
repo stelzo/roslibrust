@@ -1,4 +1,34 @@
-//! This module holds all content for directly working with ROS1 natively
+//! A implementation of roslibrust's generic traits for native ROS1 communication.
+//!
+//! This is a pure rust re-implementation of ROS1 communication via xmlrpc and TCPROS.
+//! This crate shows performance on par with roscpp.
+//!
+//! It is recommended to not use this crate directly and instead access if via the `roslibrust` crate with the `ros1` feature enabled.
+//!
+//! Basic Example:
+//! ```no_run
+//! // Normally accessed as roslibrust::{Result, TopicProvider, Publish}
+//! use roslibrust_common::{Result, TopicProvider, Publish};
+//! // Normally you'd use generated types from roslibrust::codegen
+//! use roslibrust_test::ros1::*;
+//! use roslibrust_ros1::NodeHandle;
+//!
+//! async fn my_behavior(ros: impl TopicProvider) -> Result<()> {
+//!     let publisher = ros.advertise::<std_msgs::String>("my_topic").await?;
+//!     publisher.publish(&std_msgs::String { data: "Hello, world!".to_string() }).await?;
+//!     Ok(())
+//! }
+//!
+//! #[tokio::main]
+//! async fn main() -> Result<()> {
+//!     // Create a ros1 handle we can use
+//!     let ros = NodeHandle::new("http://localhost:11311", "my_node").await?;
+//!     // Use it like ros:
+//!     my_behavior(ros).await?;
+//!     Ok(())
+//! }
+//! ```
+
 use roslibrust_common::Error;
 use roslibrust_common::{
     Publish, RosMessageType, RosServiceType, Service, ServiceFn, ServiceProvider, Subscribe,

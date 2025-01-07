@@ -11,13 +11,13 @@ use crate::{ConstantInfo, FieldInfo, MessageFile, RosLiteral, ServiceFile};
 
 fn derive_attrs() -> Vec<syn::Attribute> {
     vec![
-        parse_quote! { #[derive(::roslibrust_codegen::Deserialize)] },
-        parse_quote! { #[derive(::roslibrust_codegen::Serialize)] },
-        parse_quote! { #[derive(::roslibrust_codegen::SmartDefault)] },
+        parse_quote! { #[derive(::roslibrust::codegen::Deserialize)] },
+        parse_quote! { #[derive(::roslibrust::codegen::Serialize)] },
+        parse_quote! { #[derive(::roslibrust::codegen::SmartDefault)] },
         parse_quote! { #[derive(Debug)] },
         parse_quote! { #[derive(Clone)] },
         parse_quote! { #[derive(PartialEq)] },
-        parse_quote! { #[serde(crate = "::roslibrust_codegen::serde")] },
+        parse_quote! { #[serde(crate = "::roslibrust::codegen::serde")] },
     ]
 }
 
@@ -42,7 +42,7 @@ pub fn generate_service(service: ServiceFile) -> Result<TokenStream, Error> {
         pub struct #struct_name {
 
         }
-        impl ::roslibrust_common::RosServiceType for #struct_name {
+        impl ::roslibrust::RosServiceType for #struct_name {
             const ROS_SERVICE_NAME: &'static str = #service_type_name;
             const MD5SUM: &'static str = #service_md5sum;
             type Request = #request_name;
@@ -99,7 +99,7 @@ pub fn generate_struct(msg: MessageFile) -> Result<TokenStream, Error> {
             #(#fields )*
         }
 
-        impl ::roslibrust_common::RosMessageType for #struct_name {
+        impl ::roslibrust::RosMessageType for #struct_name {
             const ROS_TYPE_NAME: &'static str = #ros_type_name;
             const MD5SUM: &'static str = #md5sum;
             const DEFINITION: &'static str = #raw_message_definition;
@@ -193,13 +193,13 @@ fn generate_field_definition(
             // Special case for Vec<u8>, which massively benefit from optimizations in serde_bytes
             // This makes deserializing an Image ~97% faster
             if field.field_type.field_type == "uint8" {
-                quote! { #[serde(with = "::roslibrust_codegen::serde_bytes")] }
+                quote! { #[serde(with = "::roslibrust::codegen::serde_bytes")] }
             } else {
                 quote! {}
             }
         }
         Some(Some(fixed_array_len)) if fixed_array_len > MAX_FIXED_ARRAY_LEN => {
-            quote! { #[serde(with = "::roslibrust_codegen::BigArray")] }
+            quote! { #[serde(with = "::roslibrust::codegen::BigArray")] }
         }
         _ => quote! {},
     };

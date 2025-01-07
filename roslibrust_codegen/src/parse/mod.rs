@@ -26,8 +26,9 @@ lazy_static::lazy_static! {
         ("float32", "f32"),
         ("float64", "f64"),
         ("string", "::std::string::String"),
-        ("time", "::roslibrust_codegen::integral_types::Time"),
-        ("duration", "::roslibrust_codegen::integral_types::Duration"),
+        // TODO we should really get these namespaces out of here
+        ("time", "::roslibrust::codegen::integral_types::Time"),
+        ("duration", "::roslibrust::codegen::integral_types::Duration"),
     ].into_iter().collect();
 
     pub static ref ROS_2_TYPE_TO_RUST_TYPE_MAP: HashMap<&'static str, &'static str> = vec![
@@ -45,8 +46,9 @@ lazy_static::lazy_static! {
         ("float32", "f32"),
         ("float64", "f64"),
         ("string", "::std::string::String"),
-        ("builtin_interfaces/Time", "::roslibrust_codegen::integral_types::Time"),
-        ("builtin_interfaces/Duration", "::roslibrust_codegen::integral_types::Duration"),
+        // TODO we should really get these namespaces out of here
+        ("builtin_interfaces/Time", "::roslibrust::codegen::integral_types::Time"),
+        ("builtin_interfaces/Duration", "::roslibrust::codegen::integral_types::Duration"),
         // ("wstring", TODO),
     ].into_iter().collect();
 }

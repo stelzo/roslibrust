@@ -16,7 +16,7 @@ use tokio::{
 
 use super::actor::NodeServerHandle;
 
-/// The regular Publisher representation returned by calling advertise on a [crate::ros1::NodeHandle].
+/// The regular Publisher representation returned by calling advertise on a [crate::NodeHandle].
 pub struct Publisher<T> {
     // Name of the topic this publisher is publishing on
     topic_name: String,

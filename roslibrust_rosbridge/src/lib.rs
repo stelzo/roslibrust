@@ -9,7 +9,7 @@
 //! This backend is fundamentally less efficient than native ROS1 communication, but its added flexibility can be very useful.
 //!
 //! Basic Example:
-//! ```
+//! ```no_run
 //! // Normally accessed as roslibrust::{Result, TopicProvider, Publish}
 //! use roslibrust_common::{Result, TopicProvider, Publish};
 //! // Normally you'd use generated types from roslibrust::codegen

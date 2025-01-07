@@ -6,7 +6,7 @@
 //! It is recommended to not use this crate directly and instead access if via the `roslibrust` crate with the `ros1` feature enabled.
 //!
 //! Basic Example:
-//! ```
+//! ```no_run
 //! // Normally accessed as roslibrust::{Result, TopicProvider, Publish}
 //! use roslibrust_common::{Result, TopicProvider, Publish};
 //! // Normally you'd use generated types from roslibrust::codegen

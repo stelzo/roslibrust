@@ -13,38 +13,49 @@ This crate is **pure rust and requires no ROS1 or ROS2 dependencies or installat
 
 This allows writing generic behaviors like:
 
-```rust
-async fn relay<T: TopicProvider>(ros: T) -> RosResult<()> {
+```no_run
+# use roslibrust_test::ros1::*;
+use roslibrust::{TopicProvider, Publish, Subscribe};
+
+async fn relay<T: TopicProvider>(ros: T) -> roslibrust::Result<()> {
     let mut subscriber = ros.subscribe::<std_msgs::String>("in").await?;
     let mut publisher = ros.advertise::<std_msgs::String>("out").await?;
-    while let Some(msg) = subscriber.next().await {
+    while let Ok(msg) = subscriber.next().await {
         println!("Got message: {}", msg.data);
         publisher.publish(&msg).await?;
     }
     Ok(())
 }
-```
 
-That can then be used with any backend:
-
-```rust
 #[tokio::main]
-async fn main() -> RosResult<()> {
+async fn main() -> roslibrust::Result<()> {
     // Relay messages over a rosbridge connection with either ROS1 or ROS2!
+    #[cfg(feature = "rosbridge")]
+    {
     let ros = roslibrust::rosbridge::ClientHandle::new("ws://localhost:9090").await?;
     relay(ros).await?;
+    }
 
     // Relay messages over a native ROS1 connection
+    #[cfg(feature = "ros1")]
+    {
     let ros = roslibrust::ros1::NodeHandle::new("http://localhost:11311", "relay").await?;
     relay(ros).await?;
+    }
 
     // Relay messages over a mock ROS connection for testing
+    #[cfg(feature = "mock")]
+    {
     let ros = roslibrust::mock::MockRos::new();
     relay(ros).await?;
+    }
 
+    #[cfg(feature = "zenoh")]
+    {
     // Relay messages over a zenoh connection compatible with zenoh-ros1-plugin / zenoh-ros1-bridge
-    let ros = roslibrust::zenoh::ZenohClient::new(zenoh::open(zenoh::Config::default()).await?);
+    let ros = roslibrust::zenoh::ZenohClient::new(zenoh::open(zenoh::Config::default()).await.unwrap());
     relay(ros).await?;
+    }
 
     // TODO - not supported yet!
     // Relay messages over a native ROS2 connection
@@ -57,7 +68,7 @@ async fn main() -> RosResult<()> {
 All of this is backed by common traits for ROS messages, topics, and services. `roslibrust_codegen` provides generation of Rust types from both ROS1 and ROS2 .msg/.srv files and
 `roslibrust_codegen_macro` provides a convenient macro for generating these types:
 
-```rust
+```no_compile
 // Will generate types from all packages in ROS_PACKAGE_PATH 
 roslibrust_codegen_macro::find_and_generate_ros_messages!();
 ```

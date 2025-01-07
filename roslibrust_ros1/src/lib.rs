@@ -7,17 +7,25 @@
 //!
 //! Basic Example:
 //! ```
-//! async fn my_behavior(ros: impl TopicProvider) -> roslibrust::Result<()> {
+//! // Normally accessed as roslibrust::{Result, TopicProvider, Publish}
+//! use roslibrust_common::{Result, TopicProvider, Publish};
+//! // Normally you'd use generated types from roslibrust::codegen
+//! use roslibrust_test::ros1::*;
+//! use roslibrust_ros1::NodeHandle;
+//!
+//! async fn my_behavior(ros: impl TopicProvider) -> Result<()> {
 //!     let publisher = ros.advertise::<std_msgs::String>("my_topic").await?;
 //!     publisher.publish(&std_msgs::String { data: "Hello, world!".to_string() }).await?;
+//!     Ok(())
 //! }
 //!
 //! #[tokio::main]
-//! async fn main() -> Result<(), Box<dyn std::error::Error>> {
+//! async fn main() -> Result<()> {
 //!     // Create a ros1 handle we can use
-//!     let ros = roslibrust::ros1::NodeHandle::new("http://localhost:11311", "my_node").await?;
+//!     let ros = NodeHandle::new("http://localhost:11311", "my_node").await?;
 //!     // Use it like ros:
 //!     my_behavior(ros).await?;
+//!     Ok(())
 //! }
 //! ```
 

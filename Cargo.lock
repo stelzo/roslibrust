@@ -2560,10 +2560,12 @@ dependencies = [
  "roslibrust_mock",
  "roslibrust_ros1",
  "roslibrust_rosbridge",
+ "roslibrust_test",
  "roslibrust_zenoh",
  "serde",
  "test-log",
  "tokio",
+ "zenoh",
 ]
 
 [[package]]

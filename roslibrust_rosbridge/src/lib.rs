@@ -1,6 +1,6 @@
 //! A implementation of roslibrust's generic traits for rosbridge_suite communication.
 //!
-//! [rosbridge_server][<https://github.com/RobotWebTools/rosbridge_suite>] provides a useful websocket interface to ROS.
+//! [rosbridge_server](https://github.com/RobotWebTools/rosbridge_suite) provides a useful websocket interface to ROS.
 //!
 //! This server operates over a single port making it easier to use in constrained networking environments and support TLS.
 //!
@@ -10,17 +10,25 @@
 //!
 //! Basic Example:
 //! ```
-//! async fn my_behavior(ros: impl TopicProvider) -> roslibrust::Result<()> {
+//! // Normally accessed as roslibrust::{Result, TopicProvider, Publish}
+//! use roslibrust_common::{Result, TopicProvider, Publish};
+//! // Normally you'd use generated types from roslibrust::codegen
+//! use roslibrust_test::ros1::*;
+//! use roslibrust_rosbridge::ClientHandle;
+//!
+//! async fn my_behavior(ros: impl TopicProvider) -> Result<()> {
 //!     let publisher = ros.advertise::<std_msgs::String>("my_topic").await?;
 //!     publisher.publish(&std_msgs::String { data: "Hello, world!".to_string() }).await?;
+//!     Ok(())
 //! }
 //!
 //! #[tokio::main]
-//! async fn main() -> Result<(), Box<dyn std::error::Error>> {
+//! async fn main() -> Result<()> {
 //!     // Create a rosbridge handle we can use
-//!     let ros = roslibrust::rosbridge::ClientHandle::new("ws://localhost:9090").await?;
+//!     let ros = ClientHandle::new("ws://localhost:9090").await?;
 //!     // Use it like ros:
 //!     my_behavior(ros).await?;
+//!     Ok(())
 //! }
 //! ```
 

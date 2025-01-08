@@ -2695,9 +2695,9 @@ dependencies = [
 
 [[package]]
 name = "roslibrust_serde_rosmsg"
-version = "0.4.0"
+version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "dfcb4a6411b4969947dd4fcc23488c4fd7e2e3c180c8d167bece0661df5c0fae"
+checksum = "8ce8ff385202b488c2cb350e7fe6601264c78e63f28fb0b3488dee822a1d8616"
 dependencies = [
  "byteorder",
  "error-chain",

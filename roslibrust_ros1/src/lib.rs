@@ -64,7 +64,7 @@ pub(crate) type TypeErasedCallback = dyn Fn(Vec<u8>) -> Result<Vec<u8>, Box<dyn 
     + 'static;
 
 // Implement the generic roslibrust trait
-impl TopicProvider for NodeHandle {
+impl TopicProvider for crate::NodeHandle {
     type Publisher<T: RosMessageType> = crate::Publisher<T>;
     type Subscriber<T: RosMessageType> = crate::Subscriber<T>;
 
@@ -163,6 +163,7 @@ impl<T: RosMessageType> Publish<T> for Publisher<T> {
 
 #[cfg(test)]
 mod test {
+    use roslibrust_common::Ros;
     use roslibrust_common::TopicProvider;
 
     // Prove that we've implemented the topic provider trait fully for NodeHandle
@@ -178,7 +179,25 @@ mod test {
         let new_mock: Result<crate::NodeHandle, _> = Err(anyhow::anyhow!("Expected error"));
 
         let _x = MyClient {
+            // Will panic here which is expect, this test just needs to compile to prove
+            // NodeHandle implements TopicProvider
             _client: new_mock.unwrap(), // panic
+        };
+    }
+
+    #[test]
+    #[should_panic]
+    fn confirm_node_handle_impls_ros() {
+        struct MyClient<T: Ros> {
+            _client: T,
+        }
+
+        let new_mock: Result<crate::NodeHandle, _> = Err(anyhow::anyhow!("Expected error"));
+
+        let _x = MyClient {
+            // Will panic here which is expect, this test just needs to compile to prove
+            // NodeHandle implements Ros
+            _client: new_mock.unwrap(),
         };
     }
 }

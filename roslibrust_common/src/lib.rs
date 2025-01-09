@@ -131,5 +131,5 @@ pub mod md5sum;
 
 /// Contains the generic traits represent a pubsub system and service system
 /// These traits will be implemented for specific backends to provides access to "ROS Like" functionality
-pub mod topic_provider;
-pub use topic_provider::*; // Bring topic provider traits into root namespace
+pub mod traits;
+pub use traits::*; // Bring topic provider traits into root namespace

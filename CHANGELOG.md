@@ -29,6 +29,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- A new `Ros` trait has been added that all backends implement. This trait behaves like a typical ROS1 node handle, and is easier to work with in generics than directly using TopicProvider or ServiceProvider. 
+
 ### Fixed
 
 ### Changed

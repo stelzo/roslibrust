@@ -90,6 +90,19 @@ pub trait ServiceProvider {
         F: ServiceFn<T>;
 }
 
+/// Represents all "standard" ROS functionality generically supported by roslibrust
+///
+/// Implementors of this trait behave like typical ROS1 node handles.
+/// Cloning the handle does not create additional underlying connections, but instead simply returns another handle
+/// to interact with the underlying node.
+///
+/// Implementors of this trait are expected to be "self de-registering", when the last node handle for a given
+/// node is dropped, the underlying node is expected to be shut down and clean-up after itself
+pub trait Ros: 'static + Send + Sync + TopicProvider + ServiceProvider + Clone {}
+
+/// The Ros trait is auto implemented for any type that implements the required traits
+impl<T: 'static + Send + Sync + TopicProvider + ServiceProvider + Clone> Ros for T {}
+
 #[cfg(test)]
 mod test {
     // This test specifically fails because TopicProvider is not object safe

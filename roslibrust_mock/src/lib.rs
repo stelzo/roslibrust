@@ -46,18 +46,19 @@ type TypeErasedCallback = Arc<
 /// A mock ROS implementation that can be substituted for any roslibrust backend in unit tests.
 ///
 /// Implements [TopicProvider] and [ServiceProvider] to provide basic ros functionality.
+#[derive(Clone)]
 pub struct MockRos {
     // We could probably achieve some fancier type erasure than actually serializing the data
     // but this ends up being pretty simple
-    topics: RwLock<BTreeMap<String, (Channel::Sender<Vec<u8>>, Channel::Receiver<Vec<u8>>)>>,
-    services: RwLock<BTreeMap<String, TypeErasedCallback>>,
+    topics: Arc<RwLock<BTreeMap<String, (Channel::Sender<Vec<u8>>, Channel::Receiver<Vec<u8>>)>>>,
+    services: Arc<RwLock<BTreeMap<String, TypeErasedCallback>>>,
 }
 
 impl MockRos {
     pub fn new() -> Self {
         Self {
-            topics: RwLock::new(BTreeMap::new()),
-            services: RwLock::new(BTreeMap::new()),
+            topics: Arc::new(RwLock::new(BTreeMap::new())),
+            services: Arc::new(RwLock::new(BTreeMap::new())),
         }
     }
 }
@@ -288,5 +289,35 @@ mod tests {
         let response = client.call(&request).await.unwrap();
         assert_eq!(response.success, true);
         assert_eq!(response.message, "You set my bool!");
+    }
+
+    #[tokio::test(flavor = "multi_thread")]
+    async fn test_mock_node() {
+        // Proves that MockRos impls the Ros trait (via auto impl in roslibrust_common)
+        // and can be used as such
+        struct MyNode<T: Ros> {
+            ros: T,
+        }
+
+        impl<T: Ros> MyNode<T> {
+            async fn run(self) {
+                let publisher = self
+                    .ros
+                    .advertise::<std_msgs::String>("/chatter")
+                    .await
+                    .unwrap();
+
+                publisher
+                    .publish(&std_msgs::String {
+                        data: "Hello, world!".to_string(),
+                    })
+                    .await
+                    .unwrap();
+            }
+        }
+
+        let mock_ros = MockRos::new();
+        let node = MyNode { ros: mock_ros };
+        node.run().await;
     }
 }

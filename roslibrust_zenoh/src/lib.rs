@@ -8,6 +8,7 @@ use zenoh::bytes::ZBytes;
 
 /// A wrapper around a normal zenoh session that adds roslibrust specific functionality.
 /// Should be created via [ZenohClient::new], and then used via the [TopicProvider] and [ServiceProvider] traits.
+#[derive(Clone)]
 pub struct ZenohClient {
     session: zenoh::Session,
 }
@@ -385,5 +386,21 @@ mod tests {
                 "09fb03525b03e7ea1fd3992bafd87e16"
             ),
             "7374645f737276732f536574426f6f6c/09fb03525b03e7ea1fd3992bafd87e16/service_server_rs/my_set_bool");
+    }
+
+    #[test]
+    #[should_panic]
+    fn confirm_client_handle_impls_ros() {
+        struct MyClient<T: Ros> {
+            _client: T,
+        }
+
+        let new_mock: std::result::Result<ZenohClient, _> = Err(anyhow::anyhow!("Expected error"));
+
+        let _x = MyClient {
+            // Should panic here, but proves that ClientHandle implements Ros
+            // when this test compiles
+            _client: new_mock.unwrap(),
+        };
     }
 }

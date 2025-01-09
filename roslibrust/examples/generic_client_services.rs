@@ -8,7 +8,7 @@ roslibrust_codegen_macro::find_and_generate_ros_messages!("assets/ros1_common_in
 #[tokio::main]
 async fn main() {
     // Important to bring these traits into scope so we can use them
-    use roslibrust::{Service, ServiceProvider};
+    use roslibrust::{Ros, Service};
     env_logger::init();
 
     // TopicProvider cannot be an "Object Safe Trait" due to its generic parameters
@@ -20,13 +20,13 @@ async fn main() {
     // single application. The critical part is to make TopicProvider a
     // generic type on you Node.
 
-    struct MyNode<T: ServiceProvider + 'static> {
+    struct MyNode<T: Ros> {
         ros: T,
     }
 
     // Basic example of a node that publishes and subscribes to itself
     // This node will work with any backend
-    impl<T: ServiceProvider> MyNode<T> {
+    impl<T: Ros> MyNode<T> {
         fn handle_service(
             _request: std_srvs::SetBoolRequest,
         ) -> Result<std_srvs::SetBoolResponse, Box<dyn std::error::Error + Send + Sync>> {

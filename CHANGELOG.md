@@ -31,9 +31,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+### Changed
+
+## 0.12.2 - January 8th, 2025
+
+### Added
+
+### Fixed
+
 - roslibrust_serde_rosmsg verison updated resulting in a significant performance boost on serializing large messages. 95% gains measured on 1080p color image serialization. 25% gains measured on roundtrip image benchmarks with ros1 backend.
 
 ### Changed
+
+## 0.12.1 - YANKED packaging mistake
 
 ## 0.12.0 - January 7th, 2025
 

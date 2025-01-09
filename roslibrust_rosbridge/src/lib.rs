@@ -263,4 +263,21 @@ mod test {
             _client: new_mock.unwrap(), // panic
         };
     }
+
+    #[test]
+    #[should_panic]
+    fn confirm_client_handle_impls_ros() {
+        struct MyClient<T: Ros> {
+            _client: T,
+        }
+
+        let new_mock: std::result::Result<crate::ClientHandle, _> =
+            Err(anyhow::anyhow!("Expected error"));
+
+        let _x = MyClient {
+            // Should panic here, but proves that ClientHandle implements Ros
+            // when this test compiles
+            _client: new_mock.unwrap(),
+        };
+    }
 }

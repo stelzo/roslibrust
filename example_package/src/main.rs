@@ -11,7 +11,7 @@ use roslibrust::Publish;
 
 // Writing a simple behavior that uses the generic traits from roslibrust
 // and the generated types from the macro above.
-async fn pub_counter(ros: impl roslibrust::TopicProvider) {
+async fn pub_counter(ros: impl roslibrust::Ros) {
     let publisher = ros
         .advertise::<std_msgs::Int16>("example_counter")
         .await

@@ -38,6 +38,7 @@ impl RosMessageType for GenericHeader {
 }
 
 /// Sets up a subscriber that could get either of two versions of a message
+/// Note this is currently only supported by the rosbridge backend as this behavior relies on serde_json's fallback capabilities
 #[cfg(feature = "rosbridge")]
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {

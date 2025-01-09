@@ -9,7 +9,7 @@ roslibrust_codegen_macro::find_and_generate_ros_messages!("assets/ros1_common_in
 #[cfg(all(feature = "rosbridge", feature = "ros1"))]
 #[tokio::main]
 async fn main() {
-    use roslibrust::{Publish, Subscribe, TopicProvider};
+    use roslibrust::{Publish, Ros, Subscribe};
     env_logger::init();
 
     // TopicProvider cannot be an "Object Safe Trait" due to its generic parameters
@@ -21,13 +21,13 @@ async fn main() {
     // single application. The critical part is to make TopicProvider a
     // generic type on you Node.
 
-    struct MyNode<T: TopicProvider> {
+    struct MyNode<T: Ros> {
         ros: T,
         name: String,
     }
 
     // Basic example of a node that publishes and subscribes to itself
-    impl<T: TopicProvider> MyNode<T> {
+    impl<T: Ros> MyNode<T> {
         async fn run(self) {
             let publisher = self
                 .ros

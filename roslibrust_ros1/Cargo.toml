@@ -40,3 +40,4 @@ roslibrust_test = { path = "../roslibrust_test" }
 [features]
 # Used for enabling tests that rely on a running ros1 master
 ros1_test = []
+rustls = ["reqwest/rustls-tls"]

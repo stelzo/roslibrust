@@ -29,11 +29,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- A new `Ros` trait has been added that all backends implement. This trait behaves like a typical ROS1 node handle, and is easier to work with in generics than directly using TopicProvider or ServiceProvider. 
+### Fixed
+
+### Changed
+
+## 0.13.0 - March 27th, 2025
+
+### Added
+
+- A new `Ros` trait has been added that all backends implement. This trait behaves like a typical ROS1 node handle, and is easier to work with in generics than directly using TopicProvider or ServiceProvider.
 
 ### Fixed
 
 ### Changed
+
+- ZenohClient is now clone so it can implement the `Ros` trait
+- MockRos is now clone so it can implement the `Ros` trait
 
 ## 0.12.2 - January 8th, 2025
 

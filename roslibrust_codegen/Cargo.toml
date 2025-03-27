@@ -1,6 +1,6 @@
 [package]
 name = "roslibrust_codegen"
-version = "0.12.0"
+version = "0.13.0"
 edition = "2021"
 authors = ["carter <carterjschultz@gmail.com>", "ssnover <ssnover95@gmail.com>"]
 license = "MIT"
@@ -16,7 +16,7 @@ categories = ["science::robotics"]
 tokio = { workspace = true, optional = true}
 log = { workspace = true }
 serde = { workspace = true }
-roslibrust_common = { path = "../roslibrust_common", version = "0.12.0" }
+roslibrust_common = { path = "../roslibrust_common", version = "0.13.0" }
 lazy_static = "1.4"
 md5 = "0.7"
 proc-macro2 = "1.0"

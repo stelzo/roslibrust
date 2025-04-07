@@ -13,7 +13,7 @@ This crate is **pure rust and requires no ROS1 or ROS2 dependencies or installat
 
 This allows writing generic behaviors like:
 
-```no_run
+```rust ,no_run
 # use roslibrust_test::ros1::*;
 use roslibrust::{TopicProvider, Publish, Subscribe};
 

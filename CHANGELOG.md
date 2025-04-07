@@ -29,6 +29,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Fixed
+
+### Changed
+
+## 0.14.0 - Apr 7th, 2025
+
+### Added
+
 - Examples and documentation for performing `async` actions in service callbacks.
 
 ### Fixed

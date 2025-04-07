@@ -80,7 +80,10 @@ pub trait ServiceProvider {
     /// A handle is returned that manages the lifetime of the service.
     /// Dropping the handle will perform all needed cleanup.
     /// The service will be active until the handle is dropped.
-    /// Currently this function only accepts non-async functions, but with the stabilization of async closures this may change.
+    /// The service will always be called inside a [tokio::task::spawn_blocking] call.
+    /// It is generally okay to perform blocking actions inside the service function.
+    ///  - See [roslibrust/examples/ros1_service_server.rs](https://github.com/RosLibRust/roslibrust/blob/master/roslibrust/examples/ros1_service_server.rs) for a sync example of using this function.
+    ///  - See [roslibrust/examples/ros1_async_service_server.rs](https://github.com/RosLibRust/roslibrust/blob/master/roslibrust/examples/ros1_async_service_server.rs) for an async example of using this function.
     fn advertise_service<T: RosServiceType + 'static, F>(
         &self,
         topic: &str,

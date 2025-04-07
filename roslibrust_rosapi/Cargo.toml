@@ -9,7 +9,7 @@ roslibrust = { path = "../roslibrust", features = ["macro"] }
 [dev-dependencies]
 roslibrust = { path = "../roslibrust", features = ["rosbridge"] }
 tokio = { workspace = true }
-test-log = "0.2"
+test-log = { workspace = true }
 
 [features]
 # Used to indicate we're executing tests with a running ros1 rosapi node

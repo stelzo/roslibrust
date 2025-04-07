@@ -2715,6 +2715,7 @@ dependencies = [
  "log",
  "pprof",
  "roslibrust",
+ "test-log",
  "tokio",
 ]
 

@@ -141,7 +141,7 @@ impl ClientHandle {
         // This allows us to store the callbacks generic on type, Msg conversion is embedded here
         let topic_name_copy = topic_name.to_string();
         let queue_copy = queue.clone();
-        let send_cb = Box::new(move |data: &str| {
+        let send_cb = Arc::new(move |data: &str| {
             let converted = match serde_json::from_str::<Msg>(data) {
                 Err(e) => {
                     // TODO makes sense for callback to return Result<>, instead of this handling
@@ -432,7 +432,7 @@ impl ClientHandle {
 
             let res = client
                 .services
-                .insert(topic.to_string(), Box::new(erased_closure));
+                .insert(topic.to_string(), Arc::new(erased_closure));
             if let Some(_previous_server) = res {
                 error!("This should not be possible, but somehow you managed to double advertise a service despite the guard...");
             }
@@ -656,7 +656,13 @@ impl Client {
         // TODO likely bugs here remove this unwrap. Unclear what we are expected to get for empty service
         let request = data.get("args").unwrap().to_string();
         let mut writer = self.writer.write().await;
-        match callback(&request) {
+
+        // Wrap evaluation of callback in a spawn_blocking to match trait expectations from roslibrust_common
+        let callback = callback.value().clone();
+        let response = tokio::task::spawn_blocking(move || (callback)(&request))
+            .await
+            .expect("Tokio should not cancel or panic in service task");
+        match response {
             Ok(res) => {
                 // TODO unwrap here is probably bad... Failure to write means disconnected?
                 writer.service_response(topic, id, true, res).await.unwrap();

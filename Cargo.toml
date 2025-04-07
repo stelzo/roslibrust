@@ -23,3 +23,4 @@ serde = { version = "1.0", features = ["derive"] }
 # Someday we may move this crate into this workspace
 # For now this is how we keep from repeating the verison everywhere
 roslibrust_serde_rosmsg = "0.5.0"
+test-log = "0.2"

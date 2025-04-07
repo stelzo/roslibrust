@@ -204,10 +204,14 @@ impl ServiceServerLink {
                 }
             };
 
-            let response = (method)(full_body);
+            // This is the actual invocation of the service function registered by the user
+            // Because the user could register a function that blocks we want to wrap it in a tokio::spawn_blocking
+            let method_clone = method.clone();
+            let response = tokio::task::spawn_blocking(move || (method_clone)(full_body)).await;
 
             match response {
-                Ok(response) => {
+                // User's function worked
+                Ok(Ok(response)) => {
                     // MAJOR TODO: handle error here
 
                     // Another funky thing here
@@ -218,7 +222,8 @@ impl ServiceServerLink {
                     stream.write_all(&full_response).await.unwrap();
                     debug!("Wrote full service response for {service_name}");
                 }
-                Err(e) => {
+                // Error from user's function
+                Ok(Err(e)) => {
                     warn!("Error from user service method for {service_name}: {e:?}");
 
                     let error_string = format!("{:?}", e);
@@ -226,6 +231,15 @@ impl ServiceServerLink {
                     let full_response = [vec![0u8], error_bytes].concat();
 
                     stream.write_all(&full_response).await.unwrap();
+                }
+                // Error from tokio
+                Err(e) => {
+                    // We do not expect this to be recoverable
+                    error!("Server error executing {service_name}, task was canceled or panicked: {e:?}");
+                    // Returning here closes the socket
+                    return;
+                    // TODO consider de-registering the service_server here?
+                    // TODO consider crashing here?
                 }
             }
 

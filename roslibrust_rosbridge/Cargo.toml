@@ -22,7 +22,7 @@ dashmap = "5.3"
 deadqueue = "0.2.4" # .4+ is required to fix bug with missing tokio dep
 
 [dev-dependencies]
-test-log = "0.2"
+test-log = { workspace = true }
 roslibrust_codegen = { path = "../roslibrust_codegen" }
 roslibrust_codegen_macro = { path = "../roslibrust_codegen_macro" }
 roslibrust_test = { path = "../roslibrust_test" }

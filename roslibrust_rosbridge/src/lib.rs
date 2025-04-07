@@ -67,7 +67,7 @@ use tokio_tungstenite::*;
 use tungstenite::Message;
 
 /// Used for type erasure of message type so that we can store arbitrary handles
-type Callback = Box<dyn Fn(&str) + Send + Sync>;
+type Callback = std::sync::Arc<dyn Fn(&str) + Send + Sync>;
 
 /// Type erasure of callback for a service
 /// Internally this will covert the input string to the Request type
@@ -78,7 +78,7 @@ type Callback = Box<dyn Fn(&str) + Send + Sync>;
 // I can make a good argument for &str because that should be generic even if we switch
 // backends - Carter 2022-10-6
 // TODO move out of rosbridge and into "common"
-pub(crate) type ServiceCallback = Box<
+pub(crate) type ServiceCallback = std::sync::Arc<
     dyn Fn(&str) -> std::result::Result<serde_json::Value, Box<dyn std::error::Error + Send + Sync>>
         + Send
         + Sync,

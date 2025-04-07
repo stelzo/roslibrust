@@ -130,10 +130,19 @@ pub struct MockServiceClient<T: RosServiceType> {
 
 impl<T: RosServiceType> Service<T> for MockServiceClient<T> {
     async fn call(&self, request: &T::Request) -> roslibrust_common::Result<T::Response> {
+        // Serialize incoming data
         let data =
             bincode::serialize(request).map_err(|e| Error::SerializationError(e.to_string()))?;
-        let response =
-            (self.callback)(data).map_err(|e| Error::SerializationError(e.to_string()))?;
+
+        let callback = self.callback.clone();
+        // Wrap in a spawn_blocking to uphold trait expectations.
+        // Actual service call happens here
+        let response = tokio::task::spawn_blocking(move || (callback)(data))
+            .await
+            .map_err(|_e| Error::Disconnected)?
+            .map_err(|e| Error::SerializationError(e.to_string()))?;
+
+        // Deserialize response
         let response = bincode::deserialize(&response[..])
             .map_err(|e| Error::SerializationError(e.to_string()))?;
         Ok(response)

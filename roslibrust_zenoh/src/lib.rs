@@ -266,6 +266,9 @@ impl ServiceProvider for ZenohClient {
                 Error::Unexpected(anyhow::anyhow!("Failed to declare queryable: {e:?}"))
             })?;
 
+        // Move the server into an Arc so we can ensure lifetime of it remains valid across spawn_blocking:
+        let server = std::sync::Arc::new(server);
+
         // Spawn a task to handle the queries
         // This task will shut down when queryable is dropped
         tokio::spawn(async move {
@@ -288,10 +291,19 @@ impl ServiceProvider for ZenohClient {
                     continue;
                 };
 
-                let Ok(response) = server(request).map_err(|e| {
-                    error!("Failed to handle request: {e:?}");
-                }) else {
-                    continue;
+                // Evaluate the server function inside a spawn_blocking to uphold trait expectations from roslibrust_common
+                let server_copy = server.clone();
+                let join_response = tokio::task::spawn_blocking(move || server_copy(request)).await;
+                let response = match join_response {
+                    Ok(Ok(response)) => response,
+                    Ok(Err(e)) => {
+                        error!("Failed to handle request: {e:?}");
+                        continue;
+                    }
+                    Err(e) => {
+                        error!("Failed to join task: {e:?}");
+                        continue;
+                    }
                 };
 
                 let Ok(response_bytes) = roslibrust_serde_rosmsg::to_vec_skip_length(&response)

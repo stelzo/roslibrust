@@ -20,7 +20,7 @@ serde = { workspace = true }
 # Should probably become workspace members:
 lazy_static = "1.4"
 abort-on-drop = "0.2"
-test-log = "0.2"
+test-log = { workspace = true }
 
 # These are definitely needed by this crate:
 reqwest = { version = "0.11" }

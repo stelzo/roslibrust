@@ -14,6 +14,7 @@ log = { workspace = true }
 diffy = "0.3.0"
 criterion = { version = "0.4", features = ["html_reports", "async_tokio"] }
 pprof = { version = "0.11", features = ["flamegraph", "criterion"] }
+test-log = { workspace = true }
 
 [[bin]]
 path = "src/performance_ramp.rs"
@@ -22,3 +23,6 @@ name = "ramp"
 [[bench]]
 name = "image_bench"
 harness = false
+
+[features]
+ros1_test = []

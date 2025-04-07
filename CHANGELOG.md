@@ -29,9 +29,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Examples and documentation for performing `async` actions in service callbacks.
+
 ### Fixed
 
 ### Changed
+
+- All user provided service server functions are now executed inside of a `tokio::task::spawn_blocking` call, and blocking withing the service function is now safe.
 
 ## 0.13.0 - March 27th, 2025
 

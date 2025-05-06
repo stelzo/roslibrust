@@ -59,7 +59,7 @@ pub trait Service<T: RosServiceType> {
 /// This trait is analogous to TopicProvider, but instead provides the capability to create service servers and service clients
 pub trait ServiceProvider {
     type ServiceClient<T: RosServiceType>: Service<T> + Send + 'static;
-    type ServiceServer;
+    type ServiceServer: Send + 'static;
 
     /// A "oneshot" service call good for low frequency calls or where the service_provider may not always be available.
     fn call_service<T: RosServiceType>(
@@ -105,14 +105,3 @@ pub trait Ros: 'static + Send + Sync + TopicProvider + ServiceProvider + Clone {
 
 /// The Ros trait is auto implemented for any type that implements the required traits
 impl<T: 'static + Send + Sync + TopicProvider + ServiceProvider + Clone> Ros for T {}
-
-#[cfg(test)]
-mod test {
-    // This test specifically fails because TopicProvider is not object safe
-    // Traits that have methods with generic parameters cannot be object safe in rust (currently)
-    // #[test]
-    // fn topic_provider_can_be_constructed() -> TestResult {
-    //     let x: Box<dyn TopicProvider> = Box::new(ClientHandle::new(""));
-    //     Ok(())
-    // }
-}

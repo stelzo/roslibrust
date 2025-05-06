@@ -35,6 +35,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- roslibrust::ServiceProvider::ServiceServer is now Send + 'static, fixing several usage issues with holding generic service handles
+
 ## 0.14.0 - Apr 7th, 2025
 
 ### Added

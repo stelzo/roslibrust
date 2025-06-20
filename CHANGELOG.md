@@ -31,6 +31,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+### Changed
+
+## 0.15.0 - June 20th, 2025
+
+### Added
+
+### Fixed
+
 - Make unusual ros message definitions less likely to trip up roslibrust_codegen.
 
 ### Changed

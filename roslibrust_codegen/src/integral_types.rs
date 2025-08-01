@@ -78,8 +78,6 @@ impl RosMessageType for Time {
     const DEFINITION: &'static str = "";
 }
 
-// TODO provide chrono conversions here behind a cfg flag
-
 /// Matches the integral ros1 duration type, with extensions for ease of use
 /// NOTE: Is not a message in and of itself use std_msgs/Duration for that
 #[derive(:: serde :: Deserialize, :: serde :: Serialize, Debug, Default, Clone, PartialEq)]
@@ -88,10 +86,11 @@ pub struct Duration {
     pub nsec: i32,
 }
 
-/// Note this provides both tokio::time::Duration and std::time::Duration
-impl TryFrom<tokio::time::Duration> for Duration {
+/// Conversion from [std::time::Duration] to our internal [Duration] type
+/// Note: this provides both [tokio::time::Duration] and [std::time::Duration]
+impl TryFrom<std::time::Duration> for Duration {
     type Error = SimpleError;
-    fn try_from(val: tokio::time::Duration) -> Result<Self, Self::Error> {
+    fn try_from(val: std::time::Duration) -> Result<Self, Self::Error> {
         let downcast_sec = match i32::try_from(val.as_secs()) {
             Ok(val) => val,
             Err(e) => bail!(
@@ -111,7 +110,9 @@ impl TryFrom<tokio::time::Duration> for Duration {
     }
 }
 
-impl TryFrom<Duration> for tokio::time::Duration {
+/// Conversion from our internal [Duration] type to [std::time::Duration]
+/// Note: this provides both [tokio::time::Duration] and [std::time::Duration]
+impl TryFrom<Duration> for std::time::Duration {
     type Error = SimpleError;
     fn try_from(val: Duration) -> Result<Self, Self::Error> {
         let upcast_sec = match u64::try_from(val.sec) {
@@ -126,11 +127,98 @@ impl TryFrom<Duration> for tokio::time::Duration {
                 "Failed to cast ROS duration to tokio duration, nsecs could not fit in u64: {e:?}"
             ),
         };
-        Ok(tokio::time::Duration::new(upcast_sec, upcast_nsec))
+        Ok(std::time::Duration::new(upcast_sec, upcast_nsec))
     }
 }
 
-// TODO: provide chrono conversions here behind a cfg flag
+/// Conversion from chrono::DateTime<chrono::Utc> to our internal Time type
+#[cfg(feature = "chrono")]
+impl TryFrom<chrono::DateTime<chrono::Utc>> for Time {
+    type Error = SimpleError;
+    fn try_from(val: chrono::DateTime<chrono::Utc>) -> Result<Self, Self::Error> {
+        let downcast_secs = match i32::try_from(val.timestamp()) {
+            Ok(val) => val,
+            Err(e) => {
+                bail!("Failed to convert chrono time to ROS time, secs could not fit in i32: {e:?}")
+            }
+        };
+        let downcast_nanos = match i32::try_from(val.timestamp_subsec_nanos()) {
+            Ok(val) => val,
+            Err(e) => bail!(
+                "Failed to convert chrono time to ROS time, nsecs could not fit in i32: {e:?}"
+            ),
+        };
+        Ok(Time {
+            secs: downcast_secs,
+            nsecs: downcast_nanos,
+        })
+    }
+}
+
+/// Conversion from our internal [Time] type to [chrono::DateTime]
+#[cfg(feature = "chrono")]
+impl TryFrom<Time> for chrono::DateTime<chrono::Utc> {
+    type Error = SimpleError;
+    fn try_from(val: Time) -> Result<Self, Self::Error> {
+        let secs = match i64::try_from(val.secs) {
+            Ok(val) => val,
+            Err(e) => {
+                bail!("Failed to convert ROS time to chrono time, secs could not fit in i64: {e:?}")
+            }
+        };
+        let nsecs = match u32::try_from(val.nsecs) {
+            Ok(val) => val,
+            Err(e) => bail!(
+                "Failed to convert ROS time to chrono time, nsecs could not fit in u32: {e:?}"
+            ),
+        };
+        match chrono::DateTime::from_timestamp(secs, nsecs) {
+            Some(val) => Ok(val),
+            None => bail!("Failed to convert ROS time to chrono time, secs and nsecs could not fit in chrono::DateTime."),
+        }
+    }
+}
+
+/// Conversion from [chrono::Duration] to our internal [Duration] type
+#[cfg(feature = "chrono")]
+impl TryFrom<chrono::Duration> for Duration {
+    type Error = SimpleError;
+    fn try_from(val: chrono::Duration) -> Result<Self, Self::Error> {
+        // Chrono uses i64 for seconds, ROS uses i32 have to attempt downcast
+        let downcast_sec = match i32::try_from(val.num_seconds()) {
+            Ok(val) => val,
+            Err(e) => bail!(
+                "Failed to cast chrono duration to ROS duration, secs could not fit in i32:  {e:?}"
+            ),
+        };
+        Ok(Duration {
+            sec: downcast_sec,
+            nsec: val.subsec_nanos(),
+        })
+    }
+}
+
+/// Conversion from our internal [Duration] type to [chrono::Duration]
+#[cfg(feature = "chrono")]
+impl TryFrom<Duration> for chrono::Duration {
+    type Error = SimpleError;
+    // Note: this conversion shouldn't be fallible, ROS time should always fit in chrono::Duration
+    // Just being pedantic about error handling, and matching style of other conversions
+    fn try_from(val: Duration) -> Result<Self, Self::Error> {
+        let secs = match chrono::Duration::try_seconds(i64::from(val.sec)) {
+            Some(val) => val,
+            None => bail!("Failed to cast ROS duration to chrono duration, secs could not fit in chrono::Duration."),
+        };
+        // Not fallible because nanoseconds can't overflow TimeDelta
+        let nsecs = chrono::Duration::nanoseconds(i64::from(val.nsec));
+        // Probably unnecessary, but being pedantic about error handling
+        let total = match secs.checked_add(&nsecs) {
+            Some(val) => val,
+            None => bail!("Failed to cast ROS duration to chrono duration, addition overflowed when combining secs and nsecs."),
+        };
+        Ok(total)
+    }
+}
 
 #[cfg(test)]
 mod test {
@@ -202,5 +290,54 @@ mod test {
         let tokio_duration: Result<tokio::time::Duration, _> = ros_duration.try_into();
         // Won't work, we currently don't respect negative durations
         assert!(tokio_duration.is_err());
+    }
+
+    #[test]
+    #[cfg(feature = "chrono")]
+    fn test_chrono_duration_conversions() {
+        // Basic test
+        let chrono_duration = chrono::Duration::seconds(1) + chrono::Duration::nanoseconds(69);
+        let ros_duration: crate::Duration = chrono_duration.try_into().unwrap();
+        let roundtrip_duration: chrono::Duration = ros_duration.try_into().unwrap();
+        assert_eq!(chrono_duration, roundtrip_duration);
+
+        // Test 0 duration
+        let chrono_duration = chrono::Duration::seconds(0);
+        let ros_duration: crate::Duration = chrono_duration.try_into().unwrap();
+        let roundtrip_duration: chrono::Duration = ros_duration.try_into().unwrap();
+        assert_eq!(chrono_duration, roundtrip_duration);
+
+        // Test large chrono time that can't fit into ros
+        let chrono_duration = chrono::Duration::seconds(i64::MAX / 10_000);
+        let ros_duration: Result<crate::Duration, _> = chrono_duration.try_into();
+        assert!(ros_duration.is_err());
+
+        // Test negative chrono time
+        let chrono_duration = chrono::Duration::seconds(-1) + chrono::Duration::nanoseconds(-42);
+        let ros_duration: crate::Duration = chrono_duration.try_into().unwrap();
+        let roundtrip_duration: chrono::Duration = ros_duration.try_into().unwrap();
+        assert_eq!(chrono_duration, roundtrip_duration);
+    }
+
+    #[test]
+    #[cfg(feature = "chrono")]
+    fn test_chrono_time_conversions() {
+        // Basic test
+        let now = chrono::offset::Utc::now();
+        let ros_time: crate::Time = now.try_into().unwrap();
+        let roundtrip_time: chrono::DateTime<chrono::Utc> = ros_time.try_into().unwrap();
+        assert_eq!(now, roundtrip_time);
+
+        // Test EPOCH
+        let epoch = chrono::DateTime::<chrono::Utc>::UNIX_EPOCH;
+        let ros_epoch: crate::Time = epoch.try_into().unwrap();
+        let roundtrip_epoch: chrono::DateTime<chrono::Utc> = ros_epoch.try_into().unwrap();
+        assert_eq!(epoch, roundtrip_epoch);
+
+        // Test time that can't fit into ros
+        let too_large = chrono::DateTime::<chrono::Utc>::UNIX_EPOCH
+            + chrono::Duration::seconds(i32::MAX as i64 + 1000);
+        let ros_time: Result<crate::Time, _> = too_large.try_into();
+        assert!(ros_time.is_err());
     }
 }

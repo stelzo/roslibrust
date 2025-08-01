@@ -1,6 +1,6 @@
 [package]
 name = "roslibrust_codegen"
-version = "0.15.0"
+version = "0.15.1"
 edition = "2021"
 authors = ["carter <carterjschultz@gmail.com>", "ssnover <ssnover95@gmail.com>"]
 license = "MIT"
@@ -13,7 +13,6 @@ categories = ["science::robotics"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-tokio = { workspace = true, optional = true}
 log = { workspace = true }
 serde = { workspace = true }
 roslibrust_common = { path = "../roslibrust_common", version = "0.15.0" }
@@ -32,20 +31,18 @@ xml-rs = "0.8"
 smart-default = "0.7"
 serde-big-array = "0.5"
 serde_bytes = "0.11"
+chrono = { version = "0.4", optional = true }
 
 [dev-dependencies]
+# Used for testing time conversions
+tokio = { workspace = true }
 env_logger = "0.10"
 test-log = { workspace = true }
 
 [features]
-default = ["tokio"]
-all = ["tokio"]
-# Enables support for tokio time conversions
-tokio = [ "dep:tokio" ]
 # For use with CI environment or any environment with ROS1 installed
 ros1_test = []
 # For use with CI environment or any environment with ROS2 installed
 ros2_test = []
-# TODO do this!
-# # Enables support for chrono time conversions
-# chrono = []
+# Enables support for chrono time conversions
+chrono = ["dep:chrono"]

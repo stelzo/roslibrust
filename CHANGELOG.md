@@ -29,7 +29,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- roslibrust_codegen now support time conversions from chrono::DateTime and chrono::Duration to roslibrust's internal types.
+
 ### Fixed
+
+- Removed an un-used dependency on tokio from roslibrust_codegen.
 
 ### Changed
 

@@ -1,6 +1,6 @@
 [package]
 name = "roslibrust_common"
-version = "0.15.0"
+version = "0.15.1"
 edition = "2021"
 authors = [ "carter <carterjschultz@gmail.com>" ]
 license = "MIT"
@@ -16,5 +16,3 @@ anyhow = "1.0"
 serde = { workspace = true }
 # Used for md5sum calculation
 md5 = "0.7"
-# Used for async trait definitions
-futures = "0.3"

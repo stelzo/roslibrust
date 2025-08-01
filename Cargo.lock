@@ -2658,10 +2658,9 @@ dependencies = [
 
 [[package]]
 name = "roslibrust_common"
-version = "0.15.0"
+version = "0.15.1"
 dependencies = [
  "anyhow",
- "futures",
  "md5",
  "serde",
  "thiserror 2.0.6",
